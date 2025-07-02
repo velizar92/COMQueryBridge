@@ -23,7 +23,7 @@ namespace COMQueryBridge
             throw new NotImplementedException();
         }
 
-        public void ExecuteQueryAsJson(string sqlQuery)
+        public string ExecuteQueryAsJson(string sqlQuery)
         {
             throw new NotImplementedException();
         }

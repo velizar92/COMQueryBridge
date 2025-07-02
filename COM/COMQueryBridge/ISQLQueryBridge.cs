@@ -15,7 +15,7 @@ namespace COMQueryBridge
 
         int ExecuteNonQuery(string sqlQuery);
 
-        void ExecuteQueryAsJson(string sqlQuery);
+        string ExecuteQueryAsJson(string sqlQuery);
 
         void ExportResults();
     }
