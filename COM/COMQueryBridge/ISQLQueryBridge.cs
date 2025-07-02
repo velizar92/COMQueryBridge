@@ -17,6 +17,6 @@ namespace COMQueryBridge
 
         string ExecuteQueryAsJson(string sqlQuery);
 
-        void ExportResults();
+        void ExportResults(string jsonData, string filePath, string format);
     }
 }

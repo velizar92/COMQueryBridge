@@ -33,7 +33,7 @@ namespace COMQueryBridge
             throw new NotImplementedException();
         }
 
-        public void ExportResults()
+        public void ExportResults(string jsonData, string filePath, string format)
         {
             throw new NotImplementedException();
         }
