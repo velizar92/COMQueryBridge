@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using Microsoft.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using System.Runtime.InteropServices;
 
 namespace COMQueryBridge
 {
@@ -8,9 +11,19 @@ namespace COMQueryBridge
     [ProgId("COMQueryBridge.SQLQueryBridge")]
     public class SQLQueryBridge : ISQLQueryBridge
     {
-        public void Connect(string connectionString)
+        private SqlConnection _connection;
+        private string _connectionString;
+
+        public void Connect()
         {
-            throw new NotImplementedException();
+            if (_connection != null && _connection.State == ConnectionState.Open)
+            {
+                return;
+            }
+                
+            _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            _connection = new SqlConnection(_connectionString);
+            _connection.Open();
         }
 
         public void Disconnect()
