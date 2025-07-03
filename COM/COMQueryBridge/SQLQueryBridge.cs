@@ -28,7 +28,12 @@ namespace COMQueryBridge
 
         public void Disconnect()
         {
-            throw new NotImplementedException();
+            if (_connection != null && _connection.State != ConnectionState.Closed)
+            {
+                _connection.Close();
+                _connection.Dispose();
+                _connection = null;
+            }
         }
 
         public int ExecuteNonQuery(string sqlQuery)
