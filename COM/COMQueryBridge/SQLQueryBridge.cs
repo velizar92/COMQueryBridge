@@ -90,9 +90,36 @@ namespace COMQueryBridge
             }
         }
 
-        public void ExportResults(string jsonData, string filePath, string format)
+        public void ExportJsonToCsv(string jsonData, string filePath)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(jsonData))
+            {
+                throw new ArgumentException("JSON data cannot be null or empty.", nameof(jsonData));
+            }
+
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+            }
+
+            DataTable table = JsonSerializer.Deserialize<DataTable>(jsonData)
+                ?? throw new InvalidOperationException("Failed to deserialize JSON to DataTable.");
+
+            using (var writer = new StreamWriter(filePath))
+            {
+                var columnNames = table.Columns.Cast<DataColumn>()
+                    .Select(col => $"\"{col.ColumnName}\"");
+                writer.WriteLine(string.Join(",", columnNames));
+
+                foreach (DataRow row in table.Rows)
+                {
+                    var fields = row.ItemArray.Select(field =>
+                        $"\"{field?.ToString()?.Replace("\"", "\"\"")}\""
+                    );
+
+                    writer.WriteLine(string.Join(",", fields));
+                }
+            }
         }
 
 
@@ -109,7 +136,7 @@ namespace COMQueryBridge
             if (string.IsNullOrWhiteSpace(value))
             {
                 throw new ArgumentException($"Parameter '{paramName}' cannot be null or whitespace.", paramName);
-            }     
+            }
         }
     }
 }

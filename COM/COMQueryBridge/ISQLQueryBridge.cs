@@ -40,11 +40,10 @@ namespace COMQueryBridge
         string ExecuteQueryAsJson(string sqlQuery);
 
         /// <summary>
-        /// Exports query results provided as JSON to a file in the specified format.
+        /// Exports query results provided as JSON to a file in .csv format.
         /// </summary>
         /// <param name="jsonData">The JSON-formatted data to export.</param>
         /// <param name="filePath">The path to the output file.</param>
-        /// <param name="format">The export format (e.g., "csv" or "xlsx").</param>
-        void ExportResults(string jsonData, string filePath, string format);
+        void ExportJsonToCsv(string jsonData, string filePath);
     }
 }
