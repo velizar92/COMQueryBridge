@@ -187,5 +187,22 @@ Usage:
 Exceptions:
 - Throws ArgumentException if any parameter is null or whitespace. Throws InvalidOperationException if JSON cannot be deserialized.
 
+## Notes
+- Ensure the provider NuGet package corresponding to your database is installed and referenced.
+
+- Connection strings and provider names must be correctly configured for your environment.
+
+- This component is designed to be used by COM clients; ensure proper registration for COM interop.
+
+## License
+MIT License
+
+## Contributing
+Feel free to open issues or submit pull requests.
+
+## Contact
+Velizar Gerasimov - velizar9209@gmail.com
+
+Project Link: https://github.com/velizar92/COMQueryBridge
 
 
