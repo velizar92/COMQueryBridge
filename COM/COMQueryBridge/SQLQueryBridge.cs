@@ -23,15 +23,19 @@ namespace COMQueryBridge
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString))
-            {
-                throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
-            }
-
             _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             _providerName = ConfigurationManager.AppSettings["ProviderName"];
 
+            EnsureNotNullOrWhiteSpace(_connectionString, nameof(_connectionString));
+            EnsureNotNullOrWhiteSpace(_providerName, nameof(_providerName));
+  
             DbProviderFactory factory = DbProviderFactories.GetFactory(_providerName);
+
+            if (factory == null)
+            {
+                throw new InvalidOperationException($"No provider found for '{_providerName}'. Ensure the provider is registered in the application configuration.");
+            }
+
             _connection = factory.CreateConnection()
                 ?? throw new InvalidOperationException("Failed to create a connection.");
 
@@ -108,16 +112,10 @@ namespace COMQueryBridge
         }
 
         public void ExportJsonToCsv(string jsonData, string filePath)
-        {
-            if (string.IsNullOrWhiteSpace(jsonData))
-            {
-                throw new ArgumentException("JSON data cannot be null or empty.", nameof(jsonData));
-            }
-
-            if (string.IsNullOrWhiteSpace(filePath))
-            {
-                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
-            }
+        {           
+            EnsureNotNullOrWhiteSpace(jsonData, nameof(jsonData));
+          
+            EnsureNotNullOrWhiteSpace(filePath, nameof(filePath));
 
             DataTable table = JsonSerializer.Deserialize<DataTable>(jsonData)
                 ?? throw new InvalidOperationException("Failed to deserialize JSON to DataTable.");
@@ -138,6 +136,7 @@ namespace COMQueryBridge
                 }
             }
         }
+
 
         private void CheckConnection()
         {
