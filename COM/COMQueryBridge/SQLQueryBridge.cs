@@ -48,7 +48,22 @@ namespace COMQueryBridge
 
         public string ExecuteScalar(string sqlQuery)
         {
-            throw new NotImplementedException();
+            if (_connection == null || _connection.State != ConnectionState.Open)
+            {
+                throw new InvalidOperationException("Database connection is not established. Call Connect() first.");
+            }
+
+            using (var cmd = new SqlCommand(sqlQuery, _connection))
+            {
+                var result = cmd.ExecuteScalar();
+
+                if (result == null || result == DBNull.Value)
+                {
+                    return null;
+                }
+
+                return result?.ToString();
+            }
         }
 
         public void ExportResults(string jsonData, string filePath, string format)
