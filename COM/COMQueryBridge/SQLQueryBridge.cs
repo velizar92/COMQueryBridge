@@ -73,6 +73,10 @@ namespace COMQueryBridge
 
         public string ExecuteScalar(string sqlQuery)
         {
+            CheckConnection();
+
+            EnsureNotNullOrWhiteSpace(sqlQuery, nameof(sqlQuery));
+
             using (var cmd = new SqlCommand(sqlQuery, _connection))
             {
                 var result = cmd.ExecuteScalar();
