@@ -1,6 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 
@@ -12,8 +12,9 @@ namespace COMQueryBridge
     [ProgId("COMQueryBridge.SQLQueryBridge")]
     public class SQLQueryBridge : ISQLQueryBridge
     {
-        private SqlConnection _connection;
+        private DbConnection _connection;
         private string _connectionString;
+        private string _providerName;
 
         public void Connect()
         {
@@ -22,8 +23,19 @@ namespace COMQueryBridge
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString))
+            {
+                throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+            }
+
             _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            _connection = new SqlConnection(_connectionString);
+            _providerName = ConfigurationManager.AppSettings["ProviderName"];
+
+            DbProviderFactory factory = DbProviderFactories.GetFactory(_providerName);
+            _connection = factory.CreateConnection()
+                ?? throw new InvalidOperationException("Failed to create a connection.");
+
+            _connection.ConnectionString = _connectionString;
             _connection.Open();
         }
 
@@ -43,9 +55,10 @@ namespace COMQueryBridge
 
             EnsureNotNullOrWhiteSpace(sqlQuery, nameof(sqlQuery));
 
-            using (var cmd = new SqlCommand(sqlQuery, _connection))
+            using (var command = _connection.CreateCommand())
             {
-                return cmd.ExecuteNonQuery();
+                command.CommandText = sqlQuery;
+                return command.ExecuteNonQuery();
             }
         }
 
@@ -55,19 +68,21 @@ namespace COMQueryBridge
 
             EnsureNotNullOrWhiteSpace(sqlQuery, nameof(sqlQuery));
 
-            using (var cmd = new SqlCommand(sqlQuery, _connection))
-            using (var reader = cmd.ExecuteReader())
+            using (var command = _connection.CreateCommand())
             {
-                var table = new DataTable();
+                command.CommandText = sqlQuery;
 
-                table.Load(reader);
-
-                if (table.Rows.Count == 0)
+                using (var reader = command.ExecuteReader())
                 {
-                    return "[]";
-                }
+                    var table = new DataTable();
 
-                return JsonSerializer.Serialize(table);
+                    table.Load(reader);
+
+                    if (table.Rows.Count == 0)
+                        return "[]";
+
+                    return JsonSerializer.Serialize(table);
+                }
             }
         }
 
@@ -77,16 +92,18 @@ namespace COMQueryBridge
 
             EnsureNotNullOrWhiteSpace(sqlQuery, nameof(sqlQuery));
 
-            using (var cmd = new SqlCommand(sqlQuery, _connection))
+            using (var cmd = _connection.CreateCommand())
             {
+                cmd.CommandText = sqlQuery;
+
                 var result = cmd.ExecuteScalar();
 
                 if (result == null || result == DBNull.Value)
                 {
                     return null;
                 }
-
-                return result?.ToString();
+                    
+                return result.ToString();
             }
         }
 
@@ -121,7 +138,6 @@ namespace COMQueryBridge
                 }
             }
         }
-
 
         private void CheckConnection()
         {
