@@ -23,6 +23,13 @@ This project includes an **Inno Setup** installer for easy installation and COM 
 2. The installer will copy the files, register the COM DLL, and create shortcuts if applicable.
 3. To uninstall, use **Add or Remove Programs** or run the uninstaller from the installation folder.
 
+## Configuration
+
+- The installer includes a sample configuration file `appsettings.example.json`.
+- Before using the COM component, copy and rename it to `appsettings.json` in the installation folder.
+- Edit `appsettings.json` to set your database connection string and provider name.
+- This approach helps keep sensitive data out of the installer package.
+
 ### Building the installer from source
 
 If you want to build the installer yourself:
