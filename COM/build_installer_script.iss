@@ -5,7 +5,7 @@
 #endif
 
 [Files]
-Source: "COMQueryBridge\bin\Release\net8.0\*.*"; DestDir: "{app}"
+Source: "COMQueryBridge\bin\Release\net8.0-windows\*.*"; DestDir: "{app}"
 
 [Setup]
 AppName={#ApplicationName}
