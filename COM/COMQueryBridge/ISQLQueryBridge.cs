@@ -11,13 +11,9 @@ namespace COMQueryBridge
     public interface ISQLQueryBridge
     {
         /// <summary>
-        /// Establishes a connection to the database.
-        /// If the connection string is null or empty, the default from the configuration file is used.
+        /// Establishes a connection to the database. The connection string comes from the application's configuration file.
         /// </summary>
-        /// <param name="connectionString">
-        /// A valid database connection string, or null/empty to use the default from config.
-        /// </param>
-        void Connect(string connectionString);
+        void Connect();
 
         /// <summary>
         /// Closes the current database connection, if any.
