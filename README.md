@@ -1,6 +1,6 @@
 # COMQueryBridge
 
-A COM-visible, provider-agnostic SQL query bridge for .NET applications that allows executing SQL queries and exporting results in CSV format. Designed for easy integration with any COM-compatible client, supporting multiple database providers configured via the app configuration.
+A COM-visible, provider-agnostic SQL query bridge for .NET applications that allows executing SQL queries and exporting results in CSV format. Designed for easy integration with any COM-compatible client, supporting SQL Server and SQLite database providers configured via the app configuration.
 
 ## Features
 - Connects to any database using ADO.NET provider factories (SQL Server, SQLite, etc.). 
