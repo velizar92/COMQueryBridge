@@ -13,6 +13,32 @@ A COM-visible, provider-agnostic SQL query bridge for .NET applications that all
 
 - COM-visible with ProgID for seamless interop with COM clients.
 
+## Installation
+
+This project includes an **Inno Setup** installer for easy installation and COM registration.
+
+### Steps to install
+
+1. Run the installer (`COMQueryBridgeSetup.exe`).
+2. The installer will copy the files, register the COM DLL, and create shortcuts if applicable.
+3. To uninstall, use **Add or Remove Programs** or run the uninstaller from the installation folder.
+
+### Building the installer from source
+
+If you want to build the installer yourself:
+
+- Download and install [Inno Setup](https://jrsoftware.org/isinfo.php).
+- Open the provided `build_installer_script.iss` script in Inno Setup Compiler.
+- Adjust paths if necessary.
+- Compile the installer.
+
+The installer handles registering and unregistering the COM DLL automatically.
+
+---
+
+*This installer simplifies deployment by registering the COM server and managing files properly on Windows.*
+
+
 ## Getting Started
 Prerequisites:
 - .NET with Windows COM support
