@@ -20,7 +20,7 @@ namespace COMQueryBridge
             {
                 return;
             }
-                
+
             _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             _connection = new SqlConnection(_connectionString);
             _connection.Open();
@@ -38,7 +38,14 @@ namespace COMQueryBridge
 
         public int ExecuteNonQuery(string sqlQuery)
         {
-            throw new NotImplementedException();
+            CheckConnection();
+
+            EnsureNotNullOrWhiteSpace(sqlQuery, nameof(sqlQuery));
+
+            using (var cmd = new SqlCommand(sqlQuery, _connection))
+            {
+                return cmd.ExecuteNonQuery();
+            }
         }
 
         public string ExecuteQueryAsJson(string sqlQuery)
@@ -47,12 +54,7 @@ namespace COMQueryBridge
         }
 
         public string ExecuteScalar(string sqlQuery)
-        {
-            if (_connection == null || _connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Database connection is not established. Call Connect() first.");
-            }
-
+        {           
             using (var cmd = new SqlCommand(sqlQuery, _connection))
             {
                 var result = cmd.ExecuteScalar();
@@ -69,6 +71,23 @@ namespace COMQueryBridge
         public void ExportResults(string jsonData, string filePath, string format)
         {
             throw new NotImplementedException();
+        }
+
+
+        private void CheckConnection()
+        {
+            if (_connection == null || _connection.State != ConnectionState.Open)
+            {
+                throw new InvalidOperationException("Database connection is not established. Call Connect() first.");
+            }
+        }
+
+        private void EnsureNotNullOrWhiteSpace(string value, string paramName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException($"Parameter '{paramName}' cannot be null or whitespace.", paramName);
+            }     
         }
     }
 }
