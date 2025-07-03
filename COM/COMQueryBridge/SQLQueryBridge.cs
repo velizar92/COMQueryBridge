@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Data;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace COMQueryBridge
 {
@@ -50,11 +51,28 @@ namespace COMQueryBridge
 
         public string ExecuteQueryAsJson(string sqlQuery)
         {
-            throw new NotImplementedException();
+            CheckConnection();
+
+            EnsureNotNullOrWhiteSpace(sqlQuery, nameof(sqlQuery));
+
+            using (var cmd = new SqlCommand(sqlQuery, _connection))
+            using (var reader = cmd.ExecuteReader())
+            {
+                var table = new DataTable();
+
+                table.Load(reader);
+
+                if (table.Rows.Count == 0)
+                {
+                    return "[]";
+                }
+
+                return JsonSerializer.Serialize(table);
+            }
         }
 
         public string ExecuteScalar(string sqlQuery)
-        {           
+        {
             using (var cmd = new SqlCommand(sqlQuery, _connection))
             {
                 var result = cmd.ExecuteScalar();
